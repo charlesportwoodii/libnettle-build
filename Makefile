@@ -35,8 +35,8 @@ package:
 	checkinstall \
 	    -D \
 	    --fstrans \
-	    -pkgrelease "$RELEASEVER"-"$RELEASE" \
-	    -pkgrelease "$RELEASEVER"~"$RELEASE" \
+	    -pkgrelease "$(RELEASEVER)"-"$(RELEASE)" \
+	    -pkgrelease "$(RELEASEVER)"~"$(RELEASE)" \
 	    -pkgname "libnettle2" \
 	    -pkglicense GPLv3 \
 	    -pkggroup GPG \
