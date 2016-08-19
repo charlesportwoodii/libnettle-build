@@ -25,8 +25,43 @@ nettle:
 	tar -xf nettle-$(VERSION).tar.gz && \
 	cd nettle-$(VERSION) && \
 	./configure --prefix=/usr && \
-	make -j$(CORES) && \
-	make install
+	make -j$(CORES)
+
+fpm_debian:
+	echo "Packaging libnettle2 for Debian"
+
+	cd /tmp/nettle-$(VERSION) && make install DESTDIR=/tmp/libnettle2-$(VERSION)-install
+
+	fpm -s dir \
+		-t deb \
+		-n libnettle2 \
+		-v $(VERSION)-$(RELEASEVER)~$(shell lsb_release --codename | cut -f2) \
+		-C /tmp/libnettle2-$(VERSION)-install \
+		-p libnettle2_$(VERSION)-$(RELEASEVER)~$(shell lsb_release --codename | cut -f2)_$(shell arch).deb \
+		-m "charlesportwoodii@erianna.com" \
+		--license "GPLv3" \
+		--url https://github.com/charlesportwoodii/libnettle2-build \
+		--description "libnettle2" \
+		--deb-systemd-restart-after-upgrade
+
+fpm_rpm:
+	echo "Packaging libnettle2 for RPM"
+
+	cd /tmp/nettle-$(VERSION) && make install DESTDIR=/tmp/libnettle2-$(VERSION)-install
+
+	fpm -s dir \
+		-t rpm \
+		-n libnettle2 \
+		-v $(VERSION)_$(RELEASEVER) \
+		-C /tmp/libnettle2-$(VERSION)-install \
+		-p libnettle2_$(VERSION)-$(RELEASEVER)_$(shell arch).rpm \
+		-m "charlesportwoodii@erianna.com" \
+		--license "GPLv3" \
+		--url https://github.com/charlesportwoodii/libnettle2-build \
+		--description "libnettle2" \
+		--vendor "Charles R. Portwood II" \
+		--rpm-digest sha384 \
+		--rpm-compression gzip
 
 package:
 	cp $(SCRIPTPATH)/*-pak /tmp/nettle-$(VERSION)
